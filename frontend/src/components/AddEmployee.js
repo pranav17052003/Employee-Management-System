@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { createEmployee } from "../services/api";
+import Navbar from "./navbar";
+import "./AddEmployee.css";
+import { useNavigate } from "react-router-dom";
 
 const AddEmployee = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,7 +31,8 @@ const AddEmployee = () => {
         department: "",
         designation: "",
         salary: "",
-      }); // Reset the form
+      });
+      navigate("/employees");
     } catch (error) {
       console.error(error);
       alert("Failed to add employee.");
@@ -35,23 +40,41 @@ const AddEmployee = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Add Employee</h2>
-      {Object.keys(formData).map((field) => (
-        <div key={field}>
-          <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
-          <input
-            type="text"
-            name={field}
-            value={formData[field]}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      ))}
-      <button type="submit">Add Employee</button>
-    </form>
+    <div>
+      <Navbar />
+      <form className="form-container" onSubmit={handleSubmit}>
+        <h2 className="form-title">Add Employee</h2>
+        {Object.keys(formData).map((field) => (
+          <div className="form-group" key={field}>
+            <label className="form-label">
+              {field.charAt(0).toUpperCase() + field.slice(1)}:
+            </label>
+            <input
+              type="text"
+              className="form-input"
+              name={field}
+              value={formData[field]}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        ))}
+        <button type="submit" className="form-button">
+          Add Employee
+        </button>
+      </form>
+    </div>
   );
 };
 
 export default AddEmployee;
+
+
+
+
+
+
+
+
+
+							

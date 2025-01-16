@@ -135,6 +135,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow requests from your React app
 ]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+# settings.py
+
+
+
+
+# Ensure session cookies are sent with requests
+SESSION_COOKIE_SECURE = False  # Use True in production with HTTPS
+CSRF_COOKIE_SECURE = False     # Use True in production with HTTPS
+
+# Specify the login URL
+LOGIN_URL = '/employees/login/'
+

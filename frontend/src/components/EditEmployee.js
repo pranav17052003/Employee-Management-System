@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getEmployeeById, updateEmployee } from "../services/api";
+import Navbar from "./navbar";
+import "./EditEmployee.css";
 
 const EditEmployee = () => {
   const { id } = useParams();
@@ -12,8 +14,9 @@ const EditEmployee = () => {
     designation: "",
     salary: "",
   });
-
+  
   useEffect(() => {
+    console.log("Fetching employee with ID:", id);
     const fetchEmployee = async () => {
       try {
         const employee = await getEmployeeById(id);
@@ -42,22 +45,32 @@ const EditEmployee = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit Employee</h2>
-      {Object.keys(formData).map((field) => (
-        <div key={field}>
-          <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
-          <input
-            type="text"
-            name={field}
-            value={formData[field]}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      ))}
-      <button type="submit">Update Employee</button>
-    </form>
+    <div>
+      <Navbar />
+      <div>
+        <form className="form-container" onSubmit={handleSubmit}>
+          <h2 className="form-title">Edit Employee</h2>
+          {Object.keys(formData).map((field) => (
+            <div className="form-group" key={field}>
+              <label className="form-label">
+                {field.charAt(0).toUpperCase() + field.slice(1)}:
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          ))}
+          <button type="submit" className="form-button">
+            Update Employee
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

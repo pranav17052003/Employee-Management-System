@@ -1,21 +1,20 @@
 from django.contrib import admin
 from django.urls import path, include
 from employees import views
-from .views import EmployeeListCreateAPIView, EmployeeRetrieveUpdateDeleteAPIView
+from .views import EmployeeListCreateAPIView, EmployeeRetrieveUpdateDeleteAPIView, UserRegistrationAPIView
+from .views import login_view, csrf_token_view, get_user_info
 
 
-# register the viewset in urls.py using RESTFRAMEWORK USING DEFAULT ROUTER
-# from rest_framework.routers import DefaultRouter
-# from .views import EmployeeViewSet
-
-# router = DefaultRouter()
-# router.register(r'employees', EmployeeViewSet, basename='employees')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('api/user-info/', get_user_info, name ="user_info"),
+    path('register/', UserRegistrationAPIView.as_view(), name='register'),
+    path('csrf_token/', csrf_token_view, name='csrf_token'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('employees/', EmployeeListCreateAPIView.as_view(), name='employee_list_create'),
     path('employees/<int:pk>/', EmployeeRetrieveUpdateDeleteAPIView.as_view(), name='employee_retrieve_update_delete'),
+    path('employees/<int:employee_id>/soft-delete/', views.soft_delete_employee, name='soft_delete_employee'),
 ]

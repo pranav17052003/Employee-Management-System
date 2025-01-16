@@ -1,24 +1,6 @@
 from django.db import models
-# from django.contrib.auth.models import AbstractUser
-
-# # Create your models here.
-# class CustomUser(AbstractUser):
-#     is_admin = models.BooleanField(default=False)
-#     is_viewer = models.BooleanField(default=False)
-#     groups = models.ManyToManyField(
-#         'auth.Group', 
-#         related_name='customuser_groups', 
-#         blank=True, 
-#         help_text='The groups this user belongs to.'
-#     )
-#     user_permissions = models.ManyToManyField(
-#         'auth.Permission', 
-#         related_name='customuser_user_permissions', 
-#         blank=True, 
-#         help_text='Specific permissions for this user.'
-#     )
-
-
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import AbstractUser
 
 class Employee(models.Model):
     name = models.CharField(max_length=100)
@@ -33,4 +15,3 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name
-    

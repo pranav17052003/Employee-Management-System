@@ -3,35 +3,116 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 
+
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
+
+@ensure_csrf_cookie
+def csrf_token_view(request):
+    token = get_token(request)
+    return JsonResponse({'csrftoken': token})
+
+
+
+from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.models import Group
+
+@csrf_exempt
 def login_view(request):
+    """Handles user login."""
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            user = authenticate(request, username=username, password=password)
+            print(user,"ok")
+            if user:
+                login(request, user)
+                role = "Viewer"
+                if user.groups.filter(name="Admin").exists():
+                    print(user)
+                    role = "Admin"
+                return JsonResponse({'message': 'Login successful', 'role': role, 'username': user.username}, status=200)
+            else:
+                return JsonResponse({'error': 'Invalid username or password'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
         
-        if user:
-            login(request, user)
-            return redirect('dashboard')
-        else:
-            return render(request, 'login.html', {'error': 'Invalid username or password'})
-    return render(request, 'login.html')
+        
+    csrf_token = get_token(request)
+    return JsonResponse({'csrfToken': csrf_token})
 
 
 def logout_view(request):
+    """Handles user logout."""
     logout(request)
-    return redirect('login')
+    return JsonResponse({'message': 'Logout successful'}, status=200)
 
-from django.http import HttpResponseForbidden
+
+
+from django.http import JsonResponse, HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def dashboard(request):
-    if request.user.groups.filter(name='Admin').exists():
-        return render(request, 'admin_dashboard.html')
-    elif request.user.groups.filter(name='Viewer').exists():
-        return render(request, 'viewer_dashboard.html')
+    """API endpoint for determining the dashboard to render based on user role."""
+    user = request.user
+    if user.groups.filter(name='Admin').exists():
+        return JsonResponse({"role": "Admin", "message": f"Welcome {user.username}! You have Admin privileges."})
+    elif user.groups.filter(name='Viewer').exists():
+        return JsonResponse({"role": "Viewer", "message": f"Welcome {user.username}! You have Viewer privileges."})
     else:
-        return HttpResponseForbidden("APKE PASS PERMISSIONS NAHI HAI!.")
-    
-    
+        return HttpResponseForbidden("You do not have permission to access this dashboard.")
+        
+
+
+# employees/views.py
+# employees/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import UserRegistrationSerializer
+
+class UserRegistrationAPIView(APIView):
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+
+@login_required
+def get_user_info(request):
+    user = request.user
+    if user.is_authenticated:
+        return JsonResponse({'username': user.username})
+    else:
+        return JsonResponse({'error': 'User is not authenticated'}, status=403)
+
+# views.py
+
+# views.py
+# backend/views.py
 
 
 # defining api view using rest_framework generic views or viewSet
@@ -42,16 +123,41 @@ from rest_framework import status
 from .models import Employee
 from .serializers import EmployeeSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 
+class EmployeePagination(PageNumberPagination):
+   page_size = 4
+   page_size_query_param = 'page_size'
+   max_page_size = 100 
+   def get_paginated_response(self, data):
+        return Response({
+            'results': data,
+            'current_page': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'total_count': self.page.paginator.count
+        })
+
+from django.db.models import  Q
 class EmployeeListCreateAPIView(APIView):
     print("Api list called wiht method.**********")
     def get(self, request):
-        
+        print(f"Query params: {request.GET}")
+        page = request.GET.get('params[page]', None)
+        print(f"Requested page: {page}")
         """Retrieve a list of all active employees."""
         search_query = request.GET.get('search', '')
-        employees = Employee.objects.filter(is_active=True, name__icontains=search_query)
+        
+        employees = Employee.objects.filter(Q(name__icontains=search_query) | Q(department__icontains=search_query) )
+        paginator = EmployeePagination()
+        paginated_employees = paginator.paginate_queryset(employees, request)
+        print(paginated_employees)
+        if paginated_employees is not None:
+            serializer = EmployeeSerializer(paginated_employees, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+    # Fallback for non-paginated response
         serializer = EmployeeSerializer(employees, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
     def post(self, request):
         """Create a new employee."""
@@ -87,71 +193,19 @@ class EmployeeRetrieveUpdateDeleteAPIView(APIView):
 
 
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Employee
+import json
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework.permissions import IsAuthenticated
-# from rest_framework_simplejwt.tokens import RefreshToken
-# from django.contrib.auth import authenticate
-
-# class LoginView(APIView):
-#     def post(self, request):
-#         username = request.data.get('username')
-#         password = request.data.get('password')
-#         user = authenticate(username=username, password=password)
-
-#         if user:
-#             refresh = RefreshToken.for_user(user)
-#             return Response({
-#                 'refresh': str(refresh),
-#                 'access': str(refresh.access_token),
-#             })
-#         return Response({'error': 'Invalid credentials'}, status=400)
-
-# class LogoutView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request):
-#         try:
-#             refresh_token = request.data["refresh"]
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-#             return Response({"message": "Successfully logged out"}, status=200)
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=400)
+@csrf_exempt
+def soft_delete_employee(request, employee_id):
+    if request.method == "POST":
+        try:
+            employee = Employee.objects.get(id=employee_id)
+            employee.is_active = False  # Set the employee as inactive
+            employee.save()
+            return JsonResponse({"message": "Employee soft deleted successfully."}, status=200)
+        except Employee.DoesNotExist:
+            return JsonResponse({"error": "Employee not found."}, status=404)
+    return JsonResponse({"error": "Invalid request method."}, status=400)
