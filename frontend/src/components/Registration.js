@@ -35,16 +35,20 @@ const UserRegistration = () => {
     }
   };
 
+  const handleClick = () => {
+    navigate("/login")
+  }
+
   return (
-    <div class="login-page">
-      <div class="login-header box-shadow">
-        <div class="container-fluid d-flex justify-content-between align-items-center login-nav">
-          <div class="brand-logo">
+    <div className="login-page">
+      <div className="login-header box-shadow">
+        <div className="container-fluid d-flex justify-content-between align-items-center login-nav">
+          <div className="brand-logo">
             <a href="login.html">
               <h3>Employee Management System</h3>
             </a>
           </div>
-          <div class="login-menu">
+          <div className="login-menu">
             <ul>
               <li>
                 <a href="/login">
@@ -59,8 +63,8 @@ const UserRegistration = () => {
         <h2>USER REGISTRATION</h2>
         {message && <p>{message}</p>}
         <form onSubmit={handleSubmit}>
-          <div class="select-role">
-            <label>Role</label>
+          <div className="select-role">
+            Role:
             <select
               name="role"
               value={formData.role}
@@ -72,7 +76,7 @@ const UserRegistration = () => {
             </select>
           </div>
           <div>
-            <label>Username</label>
+            Username:
             <input
               type="text"
               name="username"
@@ -82,7 +86,7 @@ const UserRegistration = () => {
             />
           </div>
           <div>
-            <label>Email</label>
+            Email:
             <input
               type="email"
               name="email"
@@ -92,7 +96,7 @@ const UserRegistration = () => {
             />
           </div>
           <div>
-            <label>Password</label>
+            Password:
             <input
               type="password"
               name="password1"
@@ -102,7 +106,7 @@ const UserRegistration = () => {
             />
           </div>
           <div>
-            <label>Confirm Password</label>
+            Confirm Password:
             <input
               type="password"
               name="password2"
@@ -112,6 +116,8 @@ const UserRegistration = () => {
             />
           </div>
           <button type="submit">Register</button>
+          <br />
+          <button onClick={handleClick}>Sign In</button>
         </form>
       </div>
     </div>

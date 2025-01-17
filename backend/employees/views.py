@@ -209,3 +209,23 @@ def soft_delete_employee(request, employee_id):
         except Employee.DoesNotExist:
             return JsonResponse({"error": "Employee not found."}, status=404)
     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+import csv
+from django.http import HttpResponse
+from .models import Employee
+
+def export_employees_csv(request):
+    response =  HttpResponse(content_type = "text/csv")
+    response['Content-Disposition'] = 'attachment; filename="employees.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["ID", "name", "email", "phone", "department", "designation", "salary", "Active", "created_at", "updated_at"])
+    employees = Employee.objects.all()
+    
+    for employee in employees:
+        writer.writerow([employee.id, employee.name, employee.email, employee.phone, employee.department, employee.designation, employee.salary, employee.is_active, employee.created_at, employee.updated_at])
+        
+    return response
+    
+    
+    

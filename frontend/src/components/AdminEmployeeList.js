@@ -5,6 +5,7 @@ import Navbar from "./navbar";
 import "./EmployeeList.css";
 import SoftDeleteEmployee from "./SoftDeleteEmployee";
 import "./index.css"
+import axios from "axios";
 
 
 const AdminEmployeeList = () => {
@@ -47,30 +48,74 @@ const AdminEmployeeList = () => {
     //setCurrentPage = 1;
   };
 
+
+
+
+  const handleExport = async () => {
+    try {
+      const response = await axios.get("/api/export-csv/", {
+        responseType: "blob", // Important for downloading files
+      });
+
+      // Create a URL for the CSV file
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "employees.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+    }
+  };
+
   return (
     <div>
       <Navbar />
       <div className="pd-ltr-20">
-        <div class="card-box mb-30" style={{ paddingBottom: "20px" }}>
-          <h2 class="h4 pd-20">Employee List</h2>
-          <div className="search-container" style={{paddingLeft: "20px", paddingRight: "20px"}}>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search employees..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            <button className="add-employee-btn">
-              <Link className="add-employee-link" to="/add/">
-                Add Employee
-              </Link>
-            </button>
+        <div className="card-box mb-30" style={{ paddingBottom: "20px" }}>
+          <h2 className="h4 pd-20">Employee List</h2>
+          <div
+            className="search-container"
+            style={{ paddingLeft: "20px", paddingRight: "20px" }}
+          >
+            <div>
+              <button
+                className="add-employee-btn"
+                style={{ marginRight: "10px", borderRadius: "10px" }}
+              >
+                <i
+                  class="fas fa-user-plus"
+                  style={{ paddingRight: "10px" }}
+                ></i>
+                <Link className="add-employee-link" to="/add/">
+                  Add Employee
+                </Link>
+              </button>
+            </div>
+            <div>
+              <button
+                className="add-employee-btn"
+                style={{ marginRight: "10px", borderRadius: "10px" }}
+                onClick={handleExport}
+              >
+                <i class="fas fa-file-csv" style={{ paddingRight: "10px" }}></i>
+                Export (csv)
+              </button>
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search employees..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
-          <table class="data-table table nowrap">
+          <table className="data-table table nowrap">
             <thead>
               <tr>
-                <th class="table-plus datatable-nosort">Employee</th>
+                <th className="table-plus datatable-nosort">Employee</th>
                 <th>Name</th>
                 <th>Department</th>
                 <th>Edit</th>
@@ -81,7 +126,7 @@ const AdminEmployeeList = () => {
             <tbody>
               {employees.map((employee) => (
                 <tr>
-                  <td class="table-plus" style={{ paddingLeft: "15px" }}>
+                  <td className="table-plus" style={{ paddingLeft: "15px" }}>
                     <img
                       src="/vendors/images/photo1.jpg"
                       width="70"
@@ -89,24 +134,24 @@ const AdminEmployeeList = () => {
                       alt=""
                     />
                   </td>
-                  <td style={{ paddingLeft: "20px" }}>
-                    <h5 class="font-16">{employee.name}</h5>
+                  <td style={{ paddingLeft: "15px" }}>
+                    <h5 className="font-16">{employee.name}</h5>
                     {employee.name}
                   </td>
                   <td style={{ paddingLeft: "15px" }}>{employee.department}</td>
-                  <td style={{ paddingLeft: "30px" }}>
+                  <td style={{ paddingLeft: "25px" }}>
                     <Link to={`/edit/${employee.id}`}>
-                      <i class="fa fa-edit"></i>
+                      <i className="fa fa-edit"></i>
                     </Link>
                   </td>
-                  <td style={{ paddingLeft: "30px" }}>
+                  <td style={{ paddingLeft: "32px" }}>
                     <Link to={`/employee/${employee.id}`}>
-                      <i class="fas fa-eye"></i>{" "}
+                      <i className="fas fa-eye"></i>{" "}
                     </Link>
                   </td>
-                  <td style={{ paddingLeft: "30px" }}>
+                  <td style={{ paddingLeft: "33px" }}>
                     <i
-                      class="fa fa-trash"
+                      className="fa fa-trash"
                       onClick={() => handleDelete(employee.id)}
                     >
                       <SoftDeleteEmployee

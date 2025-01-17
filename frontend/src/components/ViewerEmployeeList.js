@@ -38,12 +38,12 @@ const ViewerEmployeeList = () => {
     <div>
       <Navbar />
       <div className="pd-ltr-20">
-        <div class="card-box mb-30" style={{ paddingBottom: "20px", marginTop: "20px" }}>
-          <h2 class="h4 pd-20">Employee List</h2>
-          <table class="data-table table nowrap" style={{marginLeft: "70px"}}>
+        <div className="card-box mb-30" style={{ paddingBottom: "20px", marginTop: "20px" }}>
+          <h2 className="h4 pd-20">Employee List</h2>
+          <table className="data-table table nowrap" style={{marginLeft: "70px"}}>
             <thead>
               <tr>
-                <th class="table-plus datatable-nosort">Employee</th>
+                <th className="table-plus datatable-nosort">Employee</th>
                 <th>Name</th>
                 <th>Department</th>
                 <th>Details</th>
@@ -52,7 +52,7 @@ const ViewerEmployeeList = () => {
             <tbody>
               {employees.map((employee) => (
                 <tr>
-                  <td class="table-plus" style={{ paddingLeft: "15px" }}>
+                  <td className="table-plus" style={{ paddingLeft: "15px" }}>
                     <img
                       src="/vendors/images/photo1.jpg"
                       width="70"
@@ -61,13 +61,13 @@ const ViewerEmployeeList = () => {
                     />
                   </td>
                   <td style={{ paddingLeft: "20px" }}>
-                    <h5 class="font-16">{employee.name}</h5>
+                    <h5 className="font-16">{employee.name}</h5>
                     {employee.name}
                   </td>
                   <td style={{ paddingLeft: "15px" }}>{employee.department}</td>
                   <td style={{ paddingLeft: "30px" }}>
                     <Link to={`/employee/${employee.id}`}>
-                      <i class="fas fa-eye"></i>{" "}
+                      <i className="fas fa-eye"></i>{" "}
                     </Link>
                   </td>
               

@@ -6,13 +6,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
+  //Chart as ChartJS,
+  //CategoryScale,
+  //LinearScale,
+  //BarElement,
+  //Title,
+  //Tooltip,
+  //Legend,
 } from "chart.js";
 
 const ViewerDashboard = () => {
@@ -49,7 +49,6 @@ useEffect(() => {
       const employees = response.data.results;
       const nextPage = response.data.total_pages;
       let num = parseInt(nextPage, 10);
-      const stri = "";
       while (num) {
         const response = await axios.get(`/api/employees/?page=${num}`); // Adjust endpoint
         employees.push(...response.data.results);
@@ -139,7 +138,6 @@ const chartData = {
             flexWrap: "wrap",
             justifyContent: "space-between",
             gap: "10px",
-            flexWrap: "wrap",
           }}
         >
           <div

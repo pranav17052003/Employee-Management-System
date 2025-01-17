@@ -48,16 +48,21 @@ const Login = () => {
     }
   };
 
+
+  const handleClick = () => {
+    navigate("/register")
+  }
+
   return (
-    <div class="login-page">
-      <div class="login-header box-shadow">
-        <div class="container-fluid d-flex justify-content-between align-items-center login-nav">
-          <div class="brand-logo">
+    <div className="login-page">
+      <div className="login-header box-shadow">
+        <div className="container-fluid d-flex justify-content-between align-items-center login-nav">
+          <div className="brand-logo">
             <a href="login.html">
               <h3>Employee Management System</h3>
             </a>
           </div>
-          <div class="login-menu">
+          <div className="login-menu">
             <ul>
               <li>
                 <a href="/register">
@@ -68,13 +73,16 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <div class="login-wrap d-flex align-items-center flex-wrap justify-content-center">
-        <div class="">
-          <div class="row align-items-center">
-            <div class="col-md-6 col-lg-5">
-              <div class="login-box bg-white box-shadow border-radius-10" >
-                <div class="login-title">
-                  <h2 class="text-center text-primary" >Login</h2>
+      <div className="login-wrap d-flex align-items-center flex-wrap justify-content-center">
+        <div className="">
+          <div className="row align-items-center">
+            <div className="col-md-6 col-lg-5">
+              <div className="login-box bg-white box-shadow border-radius-10 " style={{marginTop: "2%"}}>
+                <div className="login-title" style={{ display: "flex", justifyContent: "center", flexDirection:"column", alignItems: "center" }}>
+                  <div>
+                    <img src="/vendors/images/login_user_image.jpg" style={{ height: "70px", widht: "70px", borderRadius: "10%", marginBottom:"5px" }} alt="user_login_image" />
+                  </div>
+                  <h2 className="text-center text-primary">Login</h2>
                   {error && <p className="login-error">{error}</p>}
                 </div>
                 <form className="login-form" onSubmit={handleLogin}>
@@ -82,6 +90,7 @@ const Login = () => {
                   <input
                     type="text"
                     className="login-input"
+                    placeholder=" Enter your username "
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -91,14 +100,17 @@ const Login = () => {
                   <input
                     type="password"
                     className="login-input"
+                    placeholder="***********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                   <br />
                   <button className="login-button" type="submit">
-                    Login
+                    Sign In
                   </button>
+                  <br />
+                  <button className="login-button" onClick={handleClick}>Register</button>
                 </form>
               </div>
             </div>

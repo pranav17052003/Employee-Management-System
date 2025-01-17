@@ -48,7 +48,7 @@ const EditEmployee = () => {
     <div>
       <Navbar />
       <div>
-        <form className="form-container" onSubmit={handleSubmit}>
+        <form className="form-container bg-white box-shadow border-radius-10" onSubmit={handleSubmit}>
           <h2 className="form-title">Edit Employee</h2>
           {Object.keys(formData).map((field) => (
             <div className="form-group" key={field}>

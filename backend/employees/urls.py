@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from employees import views
 from .views import EmployeeListCreateAPIView, EmployeeRetrieveUpdateDeleteAPIView, UserRegistrationAPIView
-from .views import login_view, csrf_token_view, get_user_info
+from .views import login_view, csrf_token_view, get_user_info, export_employees_csv
 
 
 
@@ -17,4 +17,5 @@ urlpatterns = [
     path('employees/', EmployeeListCreateAPIView.as_view(), name='employee_list_create'),
     path('employees/<int:pk>/', EmployeeRetrieveUpdateDeleteAPIView.as_view(), name='employee_retrieve_update_delete'),
     path('employees/<int:employee_id>/soft-delete/', views.soft_delete_employee, name='soft_delete_employee'),
+    path('export-csv/', export_employees_csv, name='export_employees_csv'),
 ]
