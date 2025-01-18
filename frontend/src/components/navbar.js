@@ -5,7 +5,7 @@ import "./index.css"
 
 const Navbar = () => {
   return (
-    <nav>
+    <nav className="navbar">
       <div className="login-header box-shadow">
         <div className="container-fluid d-flex justify-content-between align-items-center login-nav">
           <div className="brand-logo">

@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: django-backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      # Database connection environment variables
+      POSTGRES_NAME: employee_management
+      POSTGRES_USER: employee_user
+      POSTGRES_PASSWORD: Sonu@123
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: react-frontend
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  db:
+    image: postgres:14
+    container_name: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: employee_user
+      POSTGRES_PASSWORD: Sonu@123
+      POSTGRES_DB: employee_management
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

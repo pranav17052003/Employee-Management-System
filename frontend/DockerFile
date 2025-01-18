@@ -1,0 +1,21 @@
+# frontend/Dockerfile
+FROM node:18-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and install dependencies
+COPY package.json package-lock.json /app/
+RUN npm install
+
+# Copy the React project files
+COPY . /app/
+
+# Build the React app for production
+RUN npm run build
+
+# Expose the port for development or production
+EXPOSE 3000
+
+# Start the React development server
+CMD ["npm", "start"]

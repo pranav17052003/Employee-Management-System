@@ -13,7 +13,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
+import { Pie } from "react-chartjs-2";
 
 
 ChartJS.register(
@@ -22,8 +24,12 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement,
 );
+
+
+
 const AdminDashboard = () => {
   //for fetching username from local storage
   const [username, setUsername] = useState("");
@@ -49,25 +55,35 @@ const AdminDashboard = () => {
     active: 0,
     inactive: 0,
   });
+  const [salaryBucket, setSalaryBucket] = useState({
+    "Below 50K": 0,
+    "50K-100K": 0,
+    "100K-150K": 0,
+    "Above 150K": 0,
+  });
+
+
 
   useEffect(() => {
     // Fetch employee data from the backend
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/employees1/"); // Adjust endpoint as needed
+        const response = await axios.get("/api/employees1/");
         const employees = response.data.results;
-        const nextPage = response.data.total_pages;
-        let num = parseInt(nextPage, 10);
-        const stri = ""
-        while (num) {
-          const response = await axios.get(`/api/employees1/?page=${num}`); // Adjust endpoint
-          employees.push(...response.data.results);
-          num = num - 1;
+        const totalPages = response.data.total_pages;
+
+        let allEmployees = [...employees];
+
+        for (let page = 2; page <= totalPages; page++) {
+          const response = await axios.get(`/api/employees1/?page=${page}`);
+          allEmployees.push(...response.data.results);
         }
-        
-        // Calculate summary
-        const totalEmployees = employees.length;
-        const activeEmployees = employees.filter((emp) => emp.is_active).length;
+
+        // Calculate summary data
+        const totalEmployees = allEmployees.length;
+        const activeEmployees = allEmployees.filter(
+          (emp) => emp.is_active
+        ).length;
         const inactiveEmployees = totalEmployees - activeEmployees;
 
         setSummary({
@@ -76,7 +92,25 @@ const AdminDashboard = () => {
           inactive: inactiveEmployees,
         });
 
-        setData(employees);
+        setData(allEmployees);
+
+        // Calculate salary distribution
+        const salaryBuckets = {
+          "Below 50K": 0,
+          "50K-100K": 0,
+          "100K-150K": 0,
+          "Above 150K": 0,
+        };
+
+        allEmployees.forEach((emp) => {
+          if (emp.salary < 50000) salaryBuckets["Below 50K"]++;
+          else if (emp.salary <= 100000) salaryBuckets["50K-100K"]++;
+          else if (emp.salary <= 150000) salaryBuckets["100K-150K"]++;
+          else salaryBuckets["Above 150K"]++;
+        });
+
+        setSalaryBucket(salaryBuckets);
+
       } catch (err) {
         console.error("Error fetching employee data:", err);
       }
@@ -103,11 +137,23 @@ const AdminDashboard = () => {
       },
     ],
   };
+  
+  
+  const chartData1 = {
+    labels: Object.keys(salaryBucket),
+    datasets: [
+      {
+        label: "Salary Distribution",
+        data: Object.values(salaryBucket),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+      },
+    ],
+  };
 
   return (
     <div>
       <Navbar />
-      <div className="pd-ltr-20">
+      <div className="pd-ltr-20 ">
         <div className="card-box pd-20 height-100-p mb-30">
           <div
             className="row align-items-center"
@@ -148,7 +194,6 @@ const AdminDashboard = () => {
             flexWrap: "wrap",
             justifyContent: "space-between",
             gap: "10px",
-            flexWrap: "wrap",
           }}
         >
           <div
@@ -166,7 +211,6 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
-          
         </div>
         <div className="card-box pd-20 height-100-p mb-30">
           <div
@@ -212,7 +256,19 @@ const AdminDashboard = () => {
           </div>
 
           {/* Chart Section */}
-          <div style={{ width: "70%", margin: "0 auto" }}>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "20px",
+          }}
+        >
+          <div
+            style={{ width: "47%", height: "500px", paddingTop: "100px" }}
+            className="card-box pd-20 height-100-p mb-30"
+          >
             <Bar
               data={chartData}
               options={{
@@ -228,6 +284,22 @@ const AdminDashboard = () => {
                 },
               }}
             />
+          </div>
+          <div
+            style={{
+              height: "500px",
+              width: "47%",
+              padding: "40px",
+              paddingTop: "20px",
+              paddingLeft: "7%",
+              flex: "display",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            className="card-box pd-20 height-100-p mb-30"
+          >
+            <h3>Salary Distribution</h3>
+            {chartData ? <Pie data={chartData1} /> : <p>Loading...</p>}
           </div>
         </div>
       </div>
