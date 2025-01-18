@@ -54,13 +54,13 @@ const AdminDashboard = () => {
     // Fetch employee data from the backend
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/employees/"); // Adjust endpoint as needed
+        const response = await axios.get("/api/employees1/"); // Adjust endpoint as needed
         const employees = response.data.results;
         const nextPage = response.data.total_pages;
         let num = parseInt(nextPage, 10);
         const stri = ""
         while (num) {
-          const response = await axios.get(`/api/employees/?page=${num}`); // Adjust endpoint
+          const response = await axios.get(`/api/employees1/?page=${num}`); // Adjust endpoint
           employees.push(...response.data.results);
           num = num - 1;
         }

@@ -147,7 +147,39 @@ class EmployeeListCreateAPIView(APIView):
         """Retrieve a list of all active employees."""
         search_query = request.GET.get('search', '')
         
-        employees = Employee.objects.filter(Q(name__icontains=search_query) | Q(department__icontains=search_query) )
+        employees = Employee.objects.filter((Q(name__icontains=search_query) | Q(department__icontains=search_query)) & Q(is_active=True) ).order_by("id")
+        paginator = EmployeePagination()
+        paginated_employees = paginator.paginate_queryset(employees, request)
+        print(paginated_employees)
+        if paginated_employees is not None:
+            serializer = EmployeeSerializer(paginated_employees, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+    # Fallback for non-paginated response
+        serializer = EmployeeSerializer(employees, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new employee."""
+        serializer = EmployeeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
+    
+class EmployeeListt(APIView):
+    print("Api list called wiht method.**********")
+    def get(self, request):
+        print(f"Query params: {request.GET}")
+        page = request.GET.get('params[page]', None)
+        print(f"Requested page: {page}")
+        """Retrieve a list of all active employees."""
+        search_query = request.GET.get('search', '')
+        
+        employees = Employee.objects.filter((Q(name__icontains=search_query) | Q(department__icontains=search_query)) ).order_by("id")
         paginator = EmployeePagination()
         paginated_employees = paginator.paginate_queryset(employees, request)
         print(paginated_employees)
@@ -171,7 +203,7 @@ class EmployeeListCreateAPIView(APIView):
 class EmployeeRetrieveUpdateDeleteAPIView(APIView):
     def get(self, request, pk):
         """Retrieve details of a single employee."""
-        employee = get_object_or_404(Employee, pk=pk, is_active=True)
+        employee = get_object_or_404(Employee, pk=pk)
         serializer = EmployeeSerializer(employee)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -186,10 +218,9 @@ class EmployeeRetrieveUpdateDeleteAPIView(APIView):
 
     def delete(self, request, pk):
         """Soft-delete an employee."""
-        employee = get_object_or_404(Employee, pk=pk)
-        employee.is_active = False
-        employee.save()
-        return Response({'message': 'Employee deleted successfully'}, status=status.HTTP_200_OK)
+        employee = get_object_or_404(Employee, pk=pk, is_active=True)
+        employee.delete()  # Calls the overridden delete method
+        return Response({'message': 'he ha Employee deleted successfully'}, status=status.HTTP_200_OK)
 
 
 

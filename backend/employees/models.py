@@ -15,3 +15,8 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def delete(self, using=None, keep_parents=False):
+        """Override delete to implement soft delete."""
+        self.is_active = False
+        self.save()

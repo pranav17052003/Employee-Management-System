@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getEmployees } from "../services/api";
+import { getEmployees, deleteEmployee } from "../services/api";
 import Navbar from "./navbar";
 import "./EmployeeList.css";
-import SoftDeleteEmployee from "./SoftDeleteEmployee";
+//import SoftDeleteEmployee from "./SoftDeleteEmployee";
 import "./index.css"
 import axios from "axios";
 
@@ -30,12 +30,27 @@ const AdminEmployeeList = () => {
     fetchEmployees();
   }, [currentPage, searchQuery]);
 
-  const handleDelete = (deletedEmployeeId) => {
-    // Update the state to reflect soft deletion
-    setEmployees((prevEmployees) =>
-      prevEmployees.filter((employee) => employee.id !== deletedEmployeeId)
-    );
-  };
+  // const handleDelete = (deletedEmployeeId) => {
+  //   // Update the state to reflect soft deletion
+  //   setEmployees((prevEmployees) =>
+  //     prevEmployees.filter((employee) => employee.id !== deletedEmployeeId)
+  //   );
+  // };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+      if (window.confirm("Are you sure you want to delete this employee?")) {
+        try {
+          await deleteEmployee(id);
+          console.log("heelo1")
+          setEmployees(employees.filter((employee) => employee.id !== id));
+          alert("Employee deleted successfully.");
+        } catch (error) {
+          console.error("Error deleting employee:", error);
+          alert("Failed to delete employee.");
+        }
+      }
+    };
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
@@ -69,6 +84,22 @@ const AdminEmployeeList = () => {
       console.error("Error exporting CSV:", error);
     }
   };
+
+
+
+
+  // const deleteEmployee = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this employee?")) {
+  //     try {
+  //       await axios.delete(`employees/${id}/`); // Replace with your endpoint
+  //       setEmployees(employees.filter((emp) => emp.id !== id)); // Remove deleted employee
+  //       alert("Employee deleted successfully.");
+  //     } catch (error) {
+  //       console.error("Error deleting employee:", error);
+  //       alert("Failed to delete employee.");
+  //     }
+  //   }
+  // };
 
   return (
     <div>
@@ -153,12 +184,12 @@ const AdminEmployeeList = () => {
                     <i
                       className="fa fa-trash"
                       onClick={() => handleDelete(employee.id)}
-                    >
-                      <SoftDeleteEmployee
+                    />
+                    {/* <SoftDeleteEmployee
                         employeeId={employee.id}
                         onDelete={handleDelete}
                       />
-                    </i>
+                    </i> */}
                     {/* <button className="delete-btn"></button> */}
                   </td>
                 </tr>

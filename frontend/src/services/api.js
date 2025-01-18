@@ -35,7 +35,7 @@ export const del = async (url) => {
 // Specific API Endpoints
 export const getEmployees = async (params = {}) => {
   try {
-    const response = await get("/employees/", params);
+    const response = await get("employees/", params);
     return response; // Expecting paginated response
   } catch (error) {
     console.error("Error fetching employees:", error);
@@ -56,7 +56,13 @@ export const updateEmployee = async (id, data) => {
 };
 
 export const deleteEmployee = async (id) => {
-  return del(`/employees/${id}/`);
+  try {
+    const response = await del(`/employees/${id}/`);
+    return response;
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    throw error;
+  }
 };
 
 
