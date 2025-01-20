@@ -6,98 +6,147 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
 import {
-  //Chart as ChartJS,
-  //CategoryScale,
-  //LinearScale,
-  //BarElement,
-  //Title,
-  //Tooltip,
-  //Legend,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
 } from "chart.js";
+import { Pie } from "react-chartjs-2";
 
-const ViewerDashboard = () => {
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
-const [username, setUsername] = useState("");
-const [role, setRole] = useState("");
+const AdminDashboard = () => {
+  //for fetching username from local storage
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
 
-useEffect(() => {
-  const savedUsername = localStorage.getItem("username"); // Retrieve username from localStorage
-  const savedRole = localStorage.getItem("role"); // Retrieve role from localStorage
-  if (savedUsername && savedRole) {
-    setUsername(savedUsername);
-    setRole(savedRole);
-  } else {
-    // Handle the case where the user is not logged in
-    console.error("No username found. Redirecting to login.");
-    window.location.href = "/login"; // Redirect to login page
-  }
-}, []);
-
-//for fetching all users from database total count, inactive and active to make a graph for them
-const [data, setData] = useState([]);
-const [summary, setSummary] = useState({
-  total: 0,
-  active: 0,
-  inactive: 0,
-});
-
-useEffect(() => {
-  // Fetch employee data from the backend
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("/api/employees/"); // Adjust endpoint as needed
-      const employees = response.data.results;
-      const nextPage = response.data.total_pages;
-      let num = parseInt(nextPage, 10);
-      while (num) {
-        const response = await axios.get(`/api/employees/?page=${num}`); // Adjust endpoint
-        employees.push(...response.data.results);
-        num = num - 1;
-      }
-
-      // Calculate summary
-      const totalEmployees = employees.length;
-      const activeEmployees = employees.filter((emp) => emp.is_active).length;
-      const inactiveEmployees = totalEmployees - activeEmployees;
-
-      setSummary({
-        total: totalEmployees,
-        active: activeEmployees,
-        inactive: inactiveEmployees,
-      });
-
-      setData(employees);
-    } catch (err) {
-      console.error("Error fetching employee data:", err);
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("username"); // Retrieve username from localStorage
+    const savedRole = localStorage.getItem("role"); // Retrieve role from localStorage
+    if (savedUsername && savedRole) {
+      setUsername(savedUsername);
+      setRole(savedRole);
+    } else {
+      // Handle the case where the user is not logged in
+      console.error("No username found. Redirecting to login.");
+      window.location.href = "/login"; // Redirect to login page
     }
+  }, []);
+
+  //for fetching all users from database total count, inactive and active to make a graph for them
+  const [data, setData] = useState([]);
+  const [summary, setSummary] = useState({
+    total: 0,
+    active: 0,
+    inactive: 0,
+  });
+  const [salaryBucket, setSalaryBucket] = useState({
+    "Below 50K": 0,
+    "50K-100K": 0,
+    "100K-150K": 0,
+    "Above 150K": 0,
+  });
+
+  useEffect(() => {
+    // Fetch employee data from the backend
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/employees1/");
+        const employees = response.data.results;
+        const totalPages = response.data.total_pages;
+
+        let allEmployees = [...employees];
+
+        for (let page = 2; page <= totalPages; page++) {
+          const response = await axios.get(`/api/employees1/?page=${page}`);
+          allEmployees.push(...response.data.results);
+        }
+
+        // Calculate summary data
+        const totalEmployees = allEmployees.length;
+        const activeEmployees = allEmployees.filter(
+          (emp) => emp.is_active
+        ).length;
+        const inactiveEmployees = totalEmployees - activeEmployees;
+
+        setSummary({
+          total: totalEmployees,
+          active: activeEmployees,
+          inactive: inactiveEmployees,
+        });
+
+        setData(allEmployees);
+
+        // Calculate salary distribution
+        const salaryBuckets = {
+          "Below 50K": 0,
+          "50K-100K": 0,
+          "100K-150K": 0,
+          "Above 150K": 0,
+        };
+
+        allEmployees.forEach((emp) => {
+          if (emp.salary < 50000) salaryBuckets["Below 50K"]++;
+          else if (emp.salary <= 100000) salaryBuckets["50K-100K"]++;
+          else if (emp.salary <= 150000) salaryBuckets["100K-150K"]++;
+          else salaryBuckets["Above 150K"]++;
+        });
+
+        setSalaryBucket(salaryBuckets);
+      } catch (err) {
+        console.error("Error fetching employee data:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Generate data for Chart.js
+  const departments = data.reduce((acc, emp) => {
+    acc[emp.department] = (acc[emp.department] || 0) + 1;
+    return acc;
+  }, {});
+
+  const chartData = {
+    labels: Object.keys(departments),
+    datasets: [
+      {
+        label: "Number of Employees",
+        data: Object.values(departments),
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
   };
 
-  fetchData();
-}, []);
-
-// Generate data for Chart.js
-const departments = data.reduce((acc, emp) => {
-  acc[emp.department] = (acc[emp.department] || 0) + 1;
-  return acc;
-}, {});
-
-const chartData = {
-  labels: Object.keys(departments),
-  datasets: [
-    {
-      label: "Number of Employees",
-      data: Object.values(departments),
-      backgroundColor: "rgba(75, 192, 192, 0.6)",
-      borderColor: "rgba(75, 192, 192, 1)",
-      borderWidth: 1,
-    },
-  ],
-};
+  const chartData1 = {
+    labels: Object.keys(salaryBucket),
+    datasets: [
+      {
+        label: "Salary Distribution",
+        data: Object.values(salaryBucket),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+      },
+    ],
+  };
 
   return (
     <div>
       <Navbar />
-      <div className="pd-ltr-20">
+      <div className="pd-ltr-20 ">
         <div className="card-box pd-20 height-100-p mb-30">
           <div
             className="row align-items-center"
@@ -200,7 +249,19 @@ const chartData = {
           </div>
 
           {/* Chart Section */}
-          <div style={{ width: "70%", margin: "0 auto" }}>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "20px",
+          }}
+        >
+          <div
+            style={{ width: "47%", height: "500px", paddingTop: "100px" }}
+            className="card-box pd-20 height-100-p mb-30"
+          >
             <Bar
               data={chartData}
               options={{
@@ -217,10 +278,26 @@ const chartData = {
               }}
             />
           </div>
+          <div
+            style={{
+              height: "500px",
+              width: "47%",
+              padding: "40px",
+              paddingTop: "20px",
+              paddingLeft: "7%",
+              flex: "display",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            className="card-box pd-20 height-100-p mb-30"
+          >
+            <h3>Salary Distribution</h3>
+            {chartData ? <Pie data={chartData1} /> : <p>Loading...</p>}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ViewerDashboard;
+export default AdminDashboard;

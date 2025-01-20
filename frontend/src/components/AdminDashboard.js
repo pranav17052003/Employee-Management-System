@@ -302,6 +302,22 @@ const AdminDashboard = () => {
             {chartData ? <Pie data={chartData1} /> : <p>Loading...</p>}
           </div>
         </div>
+        <div
+          style={{
+            height: "500px",
+            width: "100%",
+            padding: "40px",
+            paddingTop: "20px",
+            paddingLeft: "7%",
+            flex: "display",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          className="card-box pd-20 height-100-p mb-30"
+        >
+          <h3>Salary Distribution</h3>
+          {chartData ? <Pie data={chartData1} /> : <p>Loading...</p>}
+        </div>
       </div>
     </div>
   );

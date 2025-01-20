@@ -65,17 +65,17 @@ const EmployeeDetails = () => {
                       <div className="da-social">
                         <ul className="clearfix">
                           <li>
-                            <a href="#">
+                            <a href="https://www.google.com/">
                               <i className="fab fa-facebook"></i>
                             </a>
                           </li>
                           <li>
-                            <a href="#">
+                            <a href="https://www.google.com/">
                               <i className="fab fa-twitter"></i>
                             </a>
                           </li>
                           <li>
-                            <a href="#">
+                            <a href="https://www.google.com/">
                               <i className="fab fa-envelope-o"></i>
                             </a>
                           </li>
@@ -128,7 +128,12 @@ const EmployeeDetails = () => {
                 </div>
                 <div
                   className="da-card"
-                  style={{ width: "47%", margin: "20px", paddingLeft:"20px" , marginTop: "0px" }}
+                  style={{
+                    width: "47%",
+                    margin: "20px",
+                    paddingLeft: "20px",
+                    marginTop: "0px",
+                  }}
                 >
                   <div
                     className="da-card-content"
@@ -185,7 +190,7 @@ const EmployeeDetails = () => {
                       <ul className="clearfix">
                         <li>
                           <a
-                            href="#"
+                            href="https://www.google.com/"
                             className="btn"
                             data-bgcolor="#3b5998"
                             data-color="#ffffff"
@@ -195,7 +200,7 @@ const EmployeeDetails = () => {
                         </li>
                         <li>
                           <a
-                            href="#"
+                            href="https://www.google.com/"
                             className="btn"
                             data-bgcolor="#1da1f2"
                             data-color="#ffffff"
