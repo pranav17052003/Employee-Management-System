@@ -1,21 +1,24 @@
-# frontend/Dockerfile
-FROM node:18-alpine
+# Use Node.js as the base image
+FROM node:18
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json package-lock.json /app/
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copy the React project files
-COPY . /app/
+# Copy the entire frontend code
+COPY . .
 
-# Build the React app for production
+# Build the frontend
 RUN npm run build
 
-# Expose the port for development or production
-EXPOSE 3000
+# Use a lightweight HTTP server to serve the React app
+RUN npm install -g serve
+CMD ["serve", "-s", "build"]
 
-# Start the React development server
-CMD ["npm", "start"]
+# Expose the frontend port
+EXPOSE 3000

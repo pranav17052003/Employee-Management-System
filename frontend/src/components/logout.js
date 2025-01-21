@@ -16,6 +16,8 @@ const Logout = () => {
     }
   };
 
+  
+
   return (
     <div className="logout-modal">
       <div className="logout-modal-content">

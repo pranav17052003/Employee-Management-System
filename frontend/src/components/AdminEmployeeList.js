@@ -13,12 +13,14 @@ const AdminEmployeeList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("id")
+  const [sortOrder, setSortOrder] = useState("asc")
 
   useEffect(() => {
     console.log("Fetching employees for page:", currentPage);
     const fetchEmployees = async () => {
       try {
-        const employeeList = await getEmployees({page : currentPage, search : searchQuery});
+        const employeeList = await getEmployees({page : currentPage, search : searchQuery, sortBy : sortBy, sortOrder : sortOrder});
         console.log(employeeList)
         setEmployees(employeeList.results);
         setTotalPages(employeeList.total_pages);
@@ -28,14 +30,7 @@ const AdminEmployeeList = () => {
       }
     };
     fetchEmployees();
-  }, [currentPage, searchQuery]);
-
-  // const handleDelete = (deletedEmployeeId) => {
-  //   // Update the state to reflect soft deletion
-  //   setEmployees((prevEmployees) =>
-  //     prevEmployees.filter((employee) => employee.id !== deletedEmployeeId)
-  //   );
-  // };
+  }, [currentPage, searchQuery, sortBy, sortOrder ]);
 
   const handleDelete = async (id) => {
     console.log(id);
@@ -63,7 +58,11 @@ const AdminEmployeeList = () => {
     //setCurrentPage = 1;
   };
 
-
+  const handleSort = (field) => {
+    const newSortOrder = sortBy === field && sortOrder === "asc" ? "desc" : "asc";
+    setSortBy(field);
+    setSortOrder(newSortOrder);
+  }
 
 
   const handleExport = async () => {
@@ -84,22 +83,6 @@ const AdminEmployeeList = () => {
       console.error("Error exporting CSV:", error);
     }
   };
-
-
-
-
-  // const deleteEmployee = async (id) => {
-  //   if (window.confirm("Are you sure you want to delete this employee?")) {
-  //     try {
-  //       await axios.delete(`employees/${id}/`); // Replace with your endpoint
-  //       setEmployees(employees.filter((emp) => emp.id !== id)); // Remove deleted employee
-  //       alert("Employee deleted successfully.");
-  //     } catch (error) {
-  //       console.error("Error deleting employee:", error);
-  //       alert("Failed to delete employee.");
-  //     }
-  //   }
-  // };
 
   return (
     <div>
@@ -147,8 +130,8 @@ const AdminEmployeeList = () => {
             <thead>
               <tr>
                 <th className="table-plus datatable-nosort">Employee</th>
-                <th>Name</th>
-                <th>Department</th>
+                <th onClick={() => handleSort("name")}>Name</th>
+                <th onClick={() => handleSort("department")}>Department</th>
                 <th>Edit</th>
                 <th>Details</th>
                 <th>Delete</th>
@@ -185,12 +168,6 @@ const AdminEmployeeList = () => {
                       className="fa fa-trash"
                       onClick={() => handleDelete(employee.id)}
                     />
-                    {/* <SoftDeleteEmployee
-                        employeeId={employee.id}
-                        onDelete={handleDelete}
-                      />
-                    </i> */}
-                    {/* <button className="delete-btn"></button> */}
                   </td>
                 </tr>
               ))}

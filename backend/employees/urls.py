@@ -3,6 +3,7 @@ from django.urls import path, include
 from employees import views
 from .views import EmployeeListCreateAPIView, EmployeeRetrieveUpdateDeleteAPIView, UserRegistrationAPIView, EmployeeListt
 from .views import login_view, csrf_token_view, get_user_info, export_employees_csv
+# from rest_framework_simplejwt.views import TokenRefreshView
 
 
 
@@ -10,6 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/user-info/', get_user_info, name ="user_info"),
     path('register/', UserRegistrationAPIView.as_view(), name='register'),
     path('csrf_token/', csrf_token_view, name='csrf_token'),

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2+_vj=!@#rii$ie3zttc0cx-jkwi8&^u4l4%^4c(b^)8@-gpb+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -76,6 +76,15 @@ WSGI_APPLICATION = 'employee_management.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# from decouple import config
+
+# import os
+# from pathlib import Path
+# from dotenv import load_dotenv
+
+# BASE_DIR = Path(__file__).resolve().parent.parent
+# load_dotenv(os.path.join(BASE_DIR , '.env'))
+
 
 DATABASES = {
     'default': {

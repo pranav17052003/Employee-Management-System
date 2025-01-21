@@ -146,8 +146,13 @@ class EmployeeListCreateAPIView(APIView):
         print(f"Requested page: {page}")
         """Retrieve a list of all active employees."""
         search_query = request.GET.get('search', '')
+        sort_by = request.GET.get("sort_by", "id")
+        sort_order = request.GET.get("sort_order", "asc")
         
-        employees = Employee.objects.filter((Q(name__icontains=search_query) | Q(department__icontains=search_query)) & Q(is_active=True) ).order_by("id")
+        if sort_order == "desc":
+            sort_by = f"-{sort_by}"
+        
+        employees = Employee.objects.filter((Q(name__icontains=search_query) | Q(department__icontains=search_query)) & Q(is_active=True) ).order_by(sort_by)
         paginator = EmployeePagination()
         paginated_employees = paginator.paginate_queryset(employees, request)
         print(paginated_employees)

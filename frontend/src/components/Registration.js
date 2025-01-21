@@ -39,13 +39,25 @@ const UserRegistration = () => {
     navigate("/login")
   }
 
+
+  const divStyle = {
+    backgroundImage: "url('/vendors/images/background.jpg')",
+    backgroundSize: "cover", // Ensures the image covers the entire container
+    backgroundPosition: "center", // Centers the image
+    height: "100vh", // Full viewport height
+    width: "100%", // Full width
+    color: "white", // Optional: for text readability
+    marginTop: "0px",
+    paddingTop: "20px",
+  };
+
   return (
     <div className="login-page">
-      <div className="login-header box-shadow">
+      <div className="login-header box-shadow" style={{marginBottom: "0px", paddingBottom: "0px"}}>
         <div className="container-fluid d-flex justify-content-between align-items-center login-nav">
           <div className="brand-logo">
-            <a href="login.html">
-              <h3>Employee Management System</h3>
+            <a href="/login">
+              <h3>EMS</h3>
             </a>
           </div>
           <div className="login-menu">
@@ -59,66 +71,68 @@ const UserRegistration = () => {
           </div>
         </div>
       </div>
-      <div className="registration-form login-wrap">
-        <h2>USER REGISTRATION</h2>
-        {message && <p>{message}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="select-role">
-            Role:
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="Admin">Admin</option>
-              <option value="Viewer">Viewer</option>
-            </select>
-          </div>
-          <div>
-            Username:
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            Password:
-            <input
-              type="password"
-              name="password1"
-              value={formData.password1}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            Confirm Password:
-            <input
-              type="password"
-              name="password2"
-              value={formData.password2}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit">Register</button>
-          <br />
-          <button onClick={handleClick}>Sign In</button>
-        </form>
+      <div style={divStyle}>
+        <div className="registration-form login-wrap" style={{marginTop : "0px"}}>
+          <h2>USER REGISTRATION</h2>
+          {message && <p>{message}</p>}
+          <form onSubmit={handleSubmit}>
+            <div className="select-role">
+              Role:
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="form-input"
+              >
+                <option value="Admin">Admin</option>
+                <option value="Viewer">Viewer</option>
+              </select>
+            </div>
+            <div>
+              Username:
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              Email:
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              Password:
+              <input
+                type="password"
+                name="password1"
+                value={formData.password1}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              Confirm Password:
+              <input
+                type="password"
+                name="password2"
+                value={formData.password2}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit">Register</button>
+            <br />
+            <button onClick={handleClick}>Sign In</button>
+          </form>
+        </div>
       </div>
     </div>
   );

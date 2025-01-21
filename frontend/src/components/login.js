@@ -53,13 +53,23 @@ const Login = () => {
     navigate("/register")
   }
 
+
+    const divStyle = {
+      backgroundImage: "url('/vendors/images/background.jpg')",
+      backgroundSize: "cover", // Ensures the image covers the entire container
+      backgroundPosition: "center", // Centers the image
+      height: "100vh", // Full viewport height
+      width: "100%", // Full width
+      color: "white", // Optional: for text readability
+    };
+
   return (
-    <div className="login-page">
+    <div className="llogin-page">
       <div className="login-header box-shadow">
         <div className="container-fluid d-flex justify-content-between align-items-center login-nav">
           <div className="brand-logo">
-            <a href="login.html">
-              <h3>Employee Management System</h3>
+            <a href="/login">
+              <h3>EMS</h3>
             </a>
           </div>
           <div className="login-menu">
@@ -73,14 +83,37 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <div className="login-wrap d-flex align-items-center flex-wrap justify-content-center">
+      <div
+        className="login-wrap d-flex align-items-center flex-wrap justify-content-center"
+        style={divStyle}
+      >
         <div className="">
           <div className="row align-items-center">
             <div className="col-md-6 col-lg-5">
-              <div className="login-box bg-white box-shadow border-radius-10 " style={{marginTop: "2%"}}>
-                <div className="login-title" style={{ display: "flex", justifyContent: "center", flexDirection:"column", alignItems: "center" }}>
+              <div
+                className="login-box bg-white box-shadow border-radius-10 "
+                style={{ marginTop: "2%" }}
+              >
+                <div
+                  className="login-title"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
                   <div>
-                    <img src="/vendors/images/login_user_image.jpg" style={{ height: "70px", widht: "70px", borderRadius: "10%", marginBottom:"5px" }} alt="user_login_image" />
+                    <img
+                      src="/vendors/images/login_user_image.jpg"
+                      style={{
+                        height: "70px",
+                        widht: "70px",
+                        borderRadius: "10%",
+                        marginBottom: "5px",
+                      }}
+                      alt="user_login_image"
+                    />
                   </div>
                   <h2 className="text-center text-primary">Login</h2>
                   {error && <p className="login-error">{error}</p>}
@@ -110,7 +143,9 @@ const Login = () => {
                     Sign In
                   </button>
                   <br />
-                  <button className="login-button" onClick={handleClick}>Register</button>
+                  <button className="login-button" onClick={handleClick}>
+                    Register
+                  </button>
                 </form>
               </div>
             </div>

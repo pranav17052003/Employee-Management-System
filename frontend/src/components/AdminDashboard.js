@@ -14,9 +14,11 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  PointElement, // Include this
+  LineElement, // Include this if using Line charts
 } from "chart.js";
 import { Pie } from "react-chartjs-2";
-
+import { Line } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -26,6 +28,8 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement,
+  PointElement,
+  LineElement,
 );
 
 
@@ -34,6 +38,8 @@ const AdminDashboard = () => {
   //for fetching username from local storage
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
+  const [lineChartData, setLineChartData] = useState(null);
+  const [timeframe, setTimeframe] = useState("daily");
 
   useEffect(() => {
     const savedUsername = localStorage.getItem("username"); // Retrieve username from localStorage
@@ -63,6 +69,17 @@ const AdminDashboard = () => {
   });
 
 
+  const formatDate = (dateStr, timeframe) => {
+    const date = new Date(dateStr);
+    if (timeframe === "monthly") {
+      return `${date.getMonth() + 1}/${date.getFullYear()}`; // MM/YYYY
+    } else if (timeframe === "yearly") {
+      return `${date.getFullYear()}`; // YYYY
+    }
+    return date.toLocaleDateString("en-GB"); // DD/MM/YYYY for daily
+  };
+
+
 
   useEffect(() => {
     // Fetch employee data from the backend
@@ -78,6 +95,28 @@ const AdminDashboard = () => {
           const response = await axios.get(`/api/employees1/?page=${page}`);
           allEmployees.push(...response.data.results);
         }
+
+
+        const hiringTrends = {};
+        allEmployees.forEach((emp) => {
+          const formattedDate = formatDate(emp.created_at, timeframe);
+          hiringTrends[formattedDate] = (hiringTrends[formattedDate] || 0) + 1;
+        });
+
+        setLineChartData({
+          labels: Object.keys(hiringTrends),
+          datasets: [
+            {
+              label: `${
+                timeframe.charAt(0).toUpperCase() + timeframe.slice(1)
+              } Hires`,
+              data: Object.values(hiringTrends),
+              borderColor: "rgba(54, 162, 235, 1)",
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              tension: 0.4,
+            },
+          ],
+        });
 
         // Calculate summary data
         const totalEmployees = allEmployees.length;
@@ -117,7 +156,7 @@ const AdminDashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [timeframe]);
 
   // Generate data for Chart.js
   const departments = data.reduce((acc, emp) => {
@@ -266,7 +305,7 @@ const AdminDashboard = () => {
           }}
         >
           <div
-            style={{ width: "47%", height: "500px", paddingTop: "100px" }}
+            style={{ width: "47%", height: "500px", paddingTop: "70px" }}
             className="card-box pd-20 height-100-p mb-30"
           >
             <Bar
@@ -285,13 +324,12 @@ const AdminDashboard = () => {
               }}
             />
           </div>
+
           <div
             style={{
               height: "500px",
               width: "47%",
-              padding: "40px",
-              paddingTop: "20px",
-              paddingLeft: "7%",
+              padding: "70px",
               flex: "display",
               justifyContent: "center",
               alignItems: "center",
@@ -302,22 +340,65 @@ const AdminDashboard = () => {
             {chartData ? <Pie data={chartData1} /> : <p>Loading...</p>}
           </div>
         </div>
-        <div
+        {/* <div
           style={{
             height: "500px",
-            width: "100%",
-            padding: "40px",
-            paddingTop: "20px",
-            paddingLeft: "7%",
-            flex: "display",
-            justifyContent: "center",
-            alignItems: "center",
+            width: "47%",
+            padding: "20px",
+            paddingTop: "70px",
+            marginBottom: "20px",
+            margin
+            
           }}
           className="card-box pd-20 height-100-p mb-30"
+          
         >
-          <h3>Salary Distribution</h3>
-          {chartData ? <Pie data={chartData1} /> : <p>Loading...</p>}
-        </div>
+          <select
+            className="timeframe-dropdown"
+            value={timeframe}
+            onChange={(e) => setTimeframe(e.target.value)}
+            style={{ marginBottom: "20px", padding: "5px", fontSize: "16px" }}
+          >
+            <option value="daily">Daily</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+
+          <h3>Hiring Trends</h3>
+          {lineChartData ? (
+            <Line
+              data={lineChartData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: "top",
+                  },
+                  title: {
+                    display: true,
+                    text: "Monthly Hiring Trends",
+                  },
+                },
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Months",
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: "Number of Employees",
+                    },
+                  },
+                },
+              }}
+            />
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div> */}
       </div>
     </div>
   );

@@ -68,3 +68,40 @@
 .capitalize-text{
     text-transform: capitalize;
 }
+
+
+
+/* Add this to your CSS file */
+.timeframe-dropdown {
+    background-color: #f4f7fa;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    margin-bottom: 20px;
+}
+
+/* Add hover effect */
+.timeframe-dropdown:hover {
+    background-color: #e9eff2;
+    border-color: #adcbe3;
+}
+
+/* Add focus effect */
+.timeframe-dropdown:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Add an animation for the dropdown */
+.timeframe-dropdown option {
+    padding: 10px;
+    font-size: 16px;
+}
